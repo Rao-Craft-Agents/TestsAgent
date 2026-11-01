@@ -1,0 +1,9 @@
+{
+  "name": "Tests",
+  "tagline": "Functional tests for a Granite app on mock backend responses: services' work, pages in light and dark, a launch per tab.",
+  "category": "developer",
+  "keywords": ["swift", "tests", "swift testing", "xctest", "mocks", "ui tests", "granite", "loom"],
+  "platforms": ["macOS 14"],
+  "license": "MIT",
+  "description": "Functional tests for an app built on Granite, written from the app's own code, run on mock backend responses and never a live server. Granite writes each service's Ops tests; Tests writes what proves the app works.\n\nFor each piece of a service's work, its ticketed entry is called with the backend mocked and the state it leaves asserted: the list it fills, the next page added, nothing added past the last page, `lastError` set when the backend fails and cleared by a try again, `loading` marked while in flight. Each page is drawn offscreen in light and dark, loaded, empty and failing, and its actions are run as a tap runs them. Each destination gets a UI launch test with `-mock YES -destination <case>`, run on the iOS simulator.\n\nThe backend is the client's `.mock()` when the Mocks agent wrote one, else a server the tests play from the Network package's preview values. While the app hosts its unit tests it shows no pages, and persisted stores are keyed apart, so tests never touch what a person saved. The host's model is asked only what a page action leaves when its code does not say, and every answer is checked and parsed before it lands.\n\nOne of the Rao Craft Agents: independent packages that, tagged in prompts along the life of a project, build an app of Loom's quality."
+}
