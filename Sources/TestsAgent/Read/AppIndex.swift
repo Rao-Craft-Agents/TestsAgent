@@ -19,6 +19,11 @@ struct AppIndex: Sendable {
     let previews: Set<String>
     /// Enums the app and its packages declare, with their cases.
     let enums: [String: [String]]
+    /// The first record's id in each of the mock backend's fixtures, by the type it holds in lowercase: `post` is the
+    /// first id in PostsFixture.swift. A test passes `postId:` an id the mock answers, never `1`.
+    let mockIDs: [String: String]
+    /// The enum a parameter is turned into by `rawValue` in the app's code: `action` in `VoteAction(rawValue: action)`.
+    let rawValues: [String: String]
 
     init(project: AppProject) {
         self.project = project
@@ -38,6 +43,17 @@ struct AppIndex: Sendable {
         }
         self.previews = previews
         self.enums = enums
+        var mockIDs: [String: String] = [:], rawValues: [String: String] = [:]
+        for file in packageFiles where file.url.lastPathComponent.hasSuffix("Fixture.swift") {
+            var stem = String(file.url.lastPathComponent.dropLast("Fixture.swift".count)).lowercased()
+            if stem.hasSuffix("ies") { stem = String(stem.dropLast(3)) + "y" } else if stem.hasSuffix("s") { stem.removeLast() }
+            if mockIDs[stem] == nil, let first = SwiftText.matches(#""id"\s*:\s*(\d+|"[^"]*")"#, in: file.text).first { mockIDs[stem] = first }
+        }
+        for file in files + packageFiles {
+            for match in SwiftText.groups(#"\b([A-Z]\w*)\(rawValue:\s*(\w+)\)"#, in: file.text) where match.count > 2 && rawValues[match[2]] == nil { rawValues[match[2]] = match[1] }
+        }
+        self.mockIDs = mockIDs
+        self.rawValues = rawValues
         var reaches: [String: WorkReach] = [:]
         let everything = files + packageFiles
         for service in services {

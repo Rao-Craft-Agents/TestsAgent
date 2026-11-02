@@ -5,9 +5,13 @@ import Foundation
 
 enum Samples {
     /// A sample of `type` for the parameter `name`; `page` is the page number a page-like parameter takes.
-    static func value(_ type: String, name: String, page: Int = 1, previews: Set<String>, enums: [String: [String]]) -> String? {
+    static func value(_ type: String, name: String, page: Int = 1, previews: Set<String>, enums: [String: [String]],
+                      mockIDs: [String: String] = [:], rawValues: [String: String] = [:]) -> String? {
         let type = type.trimmingCharacters(in: .whitespaces)
-        if type.hasSuffix("?") { return value(String(type.dropLast()), name: name, page: page, previews: previews, enums: enums) }
+        if type.hasSuffix("?") { return value(String(type.dropLast()), name: name, page: page, previews: previews, enums: enums, mockIDs: mockIDs, rawValues: rawValues) }
+        // An id the mock backend answers (`postId` takes the first post's), and a string an enum is made from.
+        if let id = Self.mockID(name: name, type: type, mockIDs: mockIDs) { return id }
+        if type == "String", let made = rawValues[name], let first = enums[made]?.first { return "\"\(first)\"" }
         if type.hasPrefix("["), type.hasSuffix("]") {
             let inside = String(type.dropFirst().dropLast())
             if SwiftText.split(inside, on: ":").count == 2 { return "[:]" }
@@ -31,6 +35,19 @@ enum Samples {
         let bare = type.split(separator: ".").last.map(String.init) ?? type
         if previews.contains(bare) { return "\(type).preview" }
         if let first = enums[bare]?.first { return ".\(Naming.member(first))" }
+        return nil
+    }
+
+    /// The mock's id for a parameter named for a type's id (`postId`, `postID`, `post_id`), when the type is the
+    /// mock's and the literal fits the parameter's type.
+    static func mockID(name: String, type: String, mockIDs: [String: String]) -> String? {
+        let lower = name.lowercased()
+        guard lower.hasSuffix("id"), lower.count > 2 else { return nil }
+        let stem = String(lower.dropLast(2)).trimmingCharacters(in: CharacterSet(charactersIn: "_"))
+        guard let literal = mockIDs[stem] else { return nil }
+        let quoted = literal.hasPrefix("\"")
+        if ["Int", "Int64", "Int32", "UInt", "UInt64"].contains(type) { return quoted ? nil : literal }
+        if type == "String" { return quoted ? literal : "\"\(literal)\"" }
         return nil
     }
 

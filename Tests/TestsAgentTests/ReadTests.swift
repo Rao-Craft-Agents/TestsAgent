@@ -129,4 +129,17 @@ final class ReadTests: XCTestCase {
         XCTAssertNil(Samples.element(of: "[String: Int]"))
         XCTAssertTrue(Samples.isLiteral(".ready") && Samples.isLiteral("nil") && !Samples.isLiteral("Date()"))
     }
+
+    /// A test passes ids the mock answers and strings its enums are made from (Hearth, 2026-11-01: `postId: 1` found no
+    /// comments, and `action: "sample"` was refused by `VoteAction(rawValue:)`).
+    func testSamplesUseTheMocksIdsAndTheEnumsAStringMakes() {
+        let ids = ["post": "74119", "community": "\"c-12\""]
+        XCTAssertEqual(Samples.value("Int", name: "postId", previews: [], enums: [:], mockIDs: ids), "74119")
+        XCTAssertEqual(Samples.value("Int", name: "post_id", previews: [], enums: [:], mockIDs: ids), "74119")
+        XCTAssertEqual(Samples.value("String", name: "communityID", previews: [], enums: [:], mockIDs: ids), "\"c-12\"")
+        XCTAssertEqual(Samples.value("Int", name: "communityID", previews: [], enums: [:], mockIDs: ids), "1", "a quoted id never fills an Int")
+        XCTAssertEqual(Samples.value("String", name: "action", previews: [], enums: ["VoteAction": ["up", "down", "none"]],
+                                     rawValues: ["action": "VoteAction"]), "\"up\"")
+        XCTAssertEqual(Samples.value("String", name: "note", previews: [], enums: [:]), "\"sample\"")
+    }
 }

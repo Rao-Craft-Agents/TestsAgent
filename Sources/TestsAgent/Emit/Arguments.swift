@@ -17,7 +17,8 @@ struct Arguments {
             let bare = parameter.type.trimmingCharacters(in: CharacterSet(charactersIn: "? "))
             let isPage = Samples.isPage(parameter.name) && ["Int", "Int64", "Int32", "UInt"].contains(bare)
             if parameter.defaultValue != nil, !isPage { continue }
-            guard let value = Samples.value(parameter.type, name: parameter.name, page: page, previews: index.previews, enums: index.enums) else {
+            guard let value = Samples.value(parameter.type, name: parameter.name, page: page, previews: index.previews, enums: index.enums,
+                                            mockIDs: index.mockIDs, rawValues: index.rawValues) else {
                 return nil
             }
             hasPage = hasPage || isPage
