@@ -1,0 +1,19 @@
+{
+  "name": "Tests",
+  "tagline": "Functional tests for a Granite app on mock backend responses: services' work, pages in light and dark, a launch per tab.",
+  "category": "developer",
+  "keywords": [
+    "swift",
+    "tests",
+    "swift testing",
+    "xctest",
+    "mocks",
+    "ui tests",
+    "granite",
+    "loom"
+  ],
+  "platforms": [
+    "macOS 14"
+  ],
+  "license": "MIT"
+}
