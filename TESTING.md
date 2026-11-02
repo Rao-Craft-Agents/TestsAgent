@@ -66,3 +66,24 @@ container's folder itself is the system's: macOS refuses its removal).
 - GraniteAgent dee2792: a row view naming a package's type without importing it when no action of its page names the
   type, and Ops tests naming a package's types without importing it. `tests` adds the import to test files; the
   fixture adds the row view's, as a turn's model would.
+
+## Conformance on Hearth
+
+Level 1 of the regime: the call a model should write, sent straight to the installed runner over its wire
+(granite-agent/1) with no model, on a copy of Hearth as the journey left it (services, mock data and loom's views
+made), then checked by building, testing and screenshotting the app. A pass here means the agent can produce the
+result deterministically; whether Craft's model writes this call is tested by the prompts above.
+
+### Hearth's whole test layer on the mock backend
+
+*2026-11-01 · straight to the runner, no model*
+
+**The call**:
+
+```json
+{}
+```
+
+**Checks**:
+- First run: 79 tests in 14 suites, 6 failed on what they passed (`postId: 1`, `action: \"sample\"`). Fixed: ids from the mock's fixtures, strings an enum is made from
+- Second run: 79 tests in 14 suites passed (`xcodebuild test`, macOS scheme)
