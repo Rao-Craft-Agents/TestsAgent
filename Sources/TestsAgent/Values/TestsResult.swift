@@ -1,7 +1,8 @@
 import Foundation
+import GraniteAgents
 
 /// What a call answers: the files written or edited, as absolute paths, and what they prove.
-public struct TestsResult: Codable, Sendable, Equatable {
+public struct TestsResult: AgentAnswer, Equatable {
     /// The first file written.
     public var path: String?
     /// Every file written or edited: the tests, their support, the scheme and the app's run mode.
